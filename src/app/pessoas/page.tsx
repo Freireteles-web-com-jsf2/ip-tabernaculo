@@ -6,52 +6,11 @@ import CartaoMembro from "@/components/CartaoMembro";
 import { supabase } from '@/context/SupabaseClient';
 import { Tables, TablesInsert, TablesUpdate } from '@/types/supabase';
 
-const MOCK_MEMBROS = [
-  { id: 1, nome: "Ana Paula", cargo: "Líder", grupo: "Louvor", telefone: "(11) 98765-4321", status: "Ativo", aniversario: "1990-06-15" },
-  { id: 2, nome: "João Silva", cargo: "Membro", grupo: "Jovens", telefone: "(11) 91234-5678", status: "Ativo", aniversario: "1988-04-10" },
-  { id: 3, nome: "Carlos Eduardo", cargo: "Tesoureiro", grupo: "Financeiro", telefone: "(11) 99876-5432", status: "Inativo", aniversario: "1995-07-22" },
-];
-
-const CARGOS = ["Líder", "Membro", "Tesoureiro"];
-const GRUPOS = ["Louvor", "Jovens", "Financeiro"];
-const STATUS = ["Ativo", "Inativo"];
-
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
   return <>{children}</>;
-}
-
-// Exemplo: Buscar todos os membros (tipado)
-async function buscarMembros() {
-  const { data, error } = await supabase
-    .from('pessoas')
-    .select('*');
-  // data é Tables<'pessoas'>[] | null
-  if (error) console.error(error);
-  return data;
-}
-
-// Exemplo: Inserir novo membro (tipado)
-async function inserirMembro(novo: TablesInsert<'pessoas'>) {
-  const { data, error } = await supabase
-    .from('pessoas')
-    .insert([novo])
-    .select();
-  if (error) console.error(error);
-  return data;
-}
-
-// Exemplo: Atualizar membro (tipado)
-async function atualizarMembro(id: number, atualizacao: TablesUpdate<'pessoas'>) {
-  const { data, error } = await supabase
-    .from('pessoas')
-    .update(atualizacao)
-    .eq('id', id)
-    .select();
-  if (error) console.error(error);
-  return data;
 }
 
 export default function PessoasPage() {
@@ -64,7 +23,7 @@ export default function PessoasPage() {
   const [membros, setMembros] = useState<Tables<'pessoas'>[]>([]);
   const [membrosFiltrados, setMembrosFiltrados] = useState<Tables<'pessoas'>[]>([]);
   const [showCartao, setShowCartao] = useState(false);
-  const [membroCartao, setMembroCartao] = useState<any>(null);
+  const [membroCartao, setMembroCartao] = useState<Tables<'pessoas'> | null>(null);
   const [cargos, setCargos] = useState<{ id: number, nome: string }[]>([]);
   const [grupos, setGrupos] = useState<{ id: number, nome: string }[]>([]);
 
@@ -101,7 +60,7 @@ export default function PessoasPage() {
     );
   }, [busca, filtroCargo, filtroGrupo, filtroStatus, filtroAniversariante, membros]);
 
-  function handleImprimirCartao(membro: any) {
+  function handleImprimirCartao(membro: Tables<'pessoas'>) {
     setMembroCartao(membro);
     setShowCartao(true);
   }
@@ -222,7 +181,7 @@ export default function PessoasPage() {
               <label style={{ color: 'var(--primary)', fontWeight: 600, marginRight: 6 }}>Status:</label>
               <select value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)} className="border rounded p-1 text-base" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
                 <option value="">Todos</option>
-                {STATUS.map(s => <option key={s} value={s}>{s}</option>)}
+                {["Ativo", "Inativo"].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div className="flex items-center gap-1">

@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { supabase } from '@/context/SupabaseClient';
 import { useAdminRouteGuard } from '@/context/useAdminRouteGuard';
 import { Constants, TablesInsert, TablesUpdate, Enums } from '@/types/supabase';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function UsuariosPage() {
   const isAdmin = useAdminRouteGuard('usuarios');
-  const [usuarios, setUsuarios] = useState<any[]>([]);
-  const [pendentes, setPendentes] = useState<any[]>([]);
+  const [usuarios, setUsuarios] = useState<{ id: number, nome: string, email: string, role: Enums<'role_enum'>, status?: string }[]>([]);
+  const [pendentes, setPendentes] = useState<{ id: number, nome: string, email: string, role: Enums<'role_enum'>, status?: string }[]>([]);
   const [novoEmail, setNovoEmail] = useState("");
   const [novoNome, setNovoNome] = useState("");
   const [novoRole, setNovoRole] = useState<Enums<'role_enum'>>("membro");
@@ -87,7 +86,10 @@ export default function UsuariosPage() {
     }
     setSucesso("Usuário aprovado!");
     setPendentes(pendentes.filter(u => u.id !== id));
-    setUsuarios([...usuarios, { ...pendentes.find(u => u.id === id), status: 'ativo' }]);
+    const pendente = pendentes.find(u => u.id === id);
+    if (pendente) {
+      setUsuarios([...usuarios, { ...pendente, status: 'ativo' }]);
+    }
   }
 
   async function rejeitarUsuario(id: number) {
@@ -115,8 +117,8 @@ export default function UsuariosPage() {
       const { data } = await supabase.from('pessoas').select('id, nome, email, role, status');
       setUsuarios((data || []).filter(u => u.status !== 'pendente'));
       setPendentes((data || []).filter(u => u.status === 'pendente'));
-    } catch (e: any) {
-      setErro('Erro ao sincronizar: ' + (e.message || e));
+    } catch (e) {
+      setErro('Erro ao sincronizar: ' + ((e as Error).message || e));
     }
   }
 

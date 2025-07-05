@@ -1,17 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from '@/context/SupabaseClient';
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
 import { useAdminRouteGuard } from '@/context/useAdminRouteGuard';
 
 export default function GruposPage() {
   const isAdmin = useAdminRouteGuard('grupos');
-  if (!isAdmin) return null;
   const [grupos, setGrupos] = useState<{ id: number, nome: string }[]>([]);
   const [novoGrupo, setNovoGrupo] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [editNome, setEditNome] = useState("");
+  if (!isAdmin) return null;
 
   useEffect(() => {
     async function fetchGrupos() {

@@ -19,14 +19,14 @@ export async function POST(req: NextRequest) {
   if (pessoasError) {
     return NextResponse.json({ error: 'Erro ao buscar pessoas: ' + pessoasError.message }, { status: 500 });
   }
-  const emailsPessoas = (pessoas || []).map((p: any) => p.email);
+  const emailsPessoas = (pessoas || []).map((p: { email: string }) => p.email);
   // 3. Filtrar usuários do Auth que não estão em pessoas
-  const novos = (authUsers?.users || []).filter((u: any) => u.email && !emailsPessoas.includes(u.email));
+  const novos = (authUsers?.users || []).filter((u: { email?: string }) => u.email && !emailsPessoas.includes(u.email));
   if (novos.length === 0) {
     return NextResponse.json({ message: 'Todos os usuários do Auth já estão sincronizados.' });
   }
   // 4. Inserir os novos na tabela pessoas
-  const inserts = novos.map((u: any) => ({ nome: '', email: u.email, role: 'membro', status: 'ativo' }));
+  const inserts = novos.map((u: { email?: string }) => ({ nome: '', email: u.email, role: 'membro', status: 'ativo' }));
   const { error: insertError } = await supabase.from('pessoas').insert(inserts);
   if (insertError) {
     return NextResponse.json({ error: 'Erro ao inserir novos usuários: ' + insertError.message }, { status: 500 });

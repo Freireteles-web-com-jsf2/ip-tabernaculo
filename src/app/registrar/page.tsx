@@ -29,7 +29,7 @@ export default function Registrar() {
     }
     setCarregando(true);
     // Cria usuário no Auth
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password: senha,
     });
