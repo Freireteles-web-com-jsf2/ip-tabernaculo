@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { FaSearch, FaUserPlus, FaIdCard, FaHome } from "react-icons/fa";
 import CartaoMembro from "@/components/CartaoMembro";
 import { supabase } from '@/context/SupabaseClient';
-import { Tables, TablesInsert, TablesUpdate } from '@/types/supabase';
+import { Tables } from '@/types/supabase';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -263,7 +263,13 @@ export default function PessoasPage() {
         }}>
           <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.18)', minWidth: 380, position: 'relative' }}>
             <div id="cartao-membro-print">
-              <CartaoMembro nome={membroCartao.nome} cargo={membroCartao.cargo} grupo={membroCartao.grupo} telefone={membroCartao.telefone} foto={membroCartao.foto} />
+              <CartaoMembro
+                nome={membroCartao.nome}
+                cargo={cargos.find(c => c.id === membroCartao.cargo_id)?.nome || ''}
+                grupo={grupos.find(g => g.id === membroCartao.grupo_id)?.nome || ''}
+                telefone={membroCartao.telefone || ''}
+                foto={membroCartao.foto_url || ''}
+              />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 18 }}>
               <button onClick={() => {

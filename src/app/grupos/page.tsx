@@ -9,7 +9,6 @@ export default function GruposPage() {
   const [novoGrupo, setNovoGrupo] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [editNome, setEditNome] = useState("");
-  if (!isAdmin) return null;
 
   useEffect(() => {
     async function fetchGrupos() {
@@ -18,6 +17,8 @@ export default function GruposPage() {
     }
     fetchGrupos();
   }, []);
+
+  if (!isAdmin) return null;
 
   async function adicionarGrupo(e: React.FormEvent) {
     e.preventDefault();

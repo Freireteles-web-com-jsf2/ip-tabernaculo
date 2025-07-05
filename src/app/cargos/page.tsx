@@ -9,7 +9,6 @@ export default function CargosPage() {
   const [novoCargo, setNovoCargo] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [editNome, setEditNome] = useState("");
-  if (!isAdmin) return null;
 
   useEffect(() => {
     async function fetchCargos() {
@@ -18,6 +17,8 @@ export default function CargosPage() {
     }
     fetchCargos();
   }, []);
+
+  if (!isAdmin) return null;
 
   async function adicionarCargo(e: React.FormEvent) {
     e.preventDefault();

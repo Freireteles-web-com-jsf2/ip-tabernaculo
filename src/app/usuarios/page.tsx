@@ -24,7 +24,7 @@ export default function UsuariosPage() {
       setPendentes((data || []).filter(u => u.status === 'pendente'));
     }
     fetchUsuarios();
-  }, []);
+  }, [supabase]);
 
   async function handleCriarUsuario(e: React.FormEvent) {
     e.preventDefault();
