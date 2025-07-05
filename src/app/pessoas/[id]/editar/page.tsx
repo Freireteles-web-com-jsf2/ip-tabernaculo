@@ -5,7 +5,7 @@ import { FaSave, FaArrowLeft } from "react-icons/fa";
 import { IMaskInput } from 'react-imask';
 import Image from 'next/image';
 import { supabase } from '@/context/SupabaseClient';
-import { TablesUpdate, Constants } from '@/types/supabase';
+import { TablesUpdate, Constants, Enums } from '@/types/supabase';
 
 const MOCK_MEMBROS = [
   {
@@ -78,18 +78,10 @@ export default function EditarPessoaPage() {
   const [telefone, setTelefone] = useState("");
   const [foto, setFoto] = useState<string | null>(null);
   const [email, setEmail] = useState("");
-  const [telefoneFixo, setTelefoneFixo] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [rua, setRua] = useState("");
-  const [numero, setNumero] = useState("");
-  const [bairro, setBairro] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cep, setCep] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [carregando, setCarregando] = useState(true);
-  const [status, setStatus] = useState('ativo');
-  const [role, setRole] = useState('membro');
+  const [status, setStatus] = useState<Enums<'status_membro_enum'>>('ativo');
+  const [role, setRole] = useState<Enums<'role_enum'>>('membro');
 
   useEffect(() => {
     async function carregarMembro() {
@@ -101,17 +93,9 @@ export default function EditarPessoaPage() {
         setTelefone(data.telefone || "");
         setFoto(data.foto_url || null);
         setEmail(data.email || "");
-        setTelefoneFixo(data.telefone_fixo || "");
-        setWhatsapp(data.whatsapp || "");
-        setRua(data.rua || "");
-        setNumero(data.numero || "");
-        setBairro(data.bairro || "");
-        setCidade(data.cidade || "");
-        setEstado(data.estado || "");
-        setCep(data.cep || "");
         setObservacoes(data.observacoes || "");
-        setStatus(data.status || 'ativo');
-        setRole(data.role || 'membro');
+        setStatus((data.status as Enums<'status_membro_enum'>) || 'ativo');
+        setRole((data.role as Enums<'role_enum'>) || 'membro');
       }
       setCarregando(false);
     }
@@ -155,14 +139,6 @@ export default function EditarPessoaPage() {
       grupo_id: grupoId ? Number(grupoId) : null,
       status,
       role,
-      telefone_fixo: telefoneFixo,
-      whatsapp,
-      rua,
-      numero,
-      bairro,
-      cidade,
-      estado,
-      cep,
       observacoes,
     };
     const { error } = await supabase.from('pessoas').update(atualizacao).eq('id', id);
@@ -247,67 +223,22 @@ export default function EditarPessoaPage() {
         />
         <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>E-mail</label>
         <input type="email" className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={email} onChange={e => setEmail(e.target.value)} />
-        <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Telefone Fixo</label>
-        <IMaskInput
-          mask="(00) 0000-0000"
-          value={telefoneFixo}
-          onAccept={(value: string) => setTelefoneFixo(value)}
-          className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-          style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}
-        />
-        <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>WhatsApp</label>
-        <IMaskInput
-          mask="(00) 00000-0000"
-          value={whatsapp}
-          onAccept={(value: string) => setWhatsapp(value)}
-          className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-          style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}
-        />
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Rua</label>
-            <input type="text" className="w-full p-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={rua} onChange={e => setRua(e.target.value)} />
-          </div>
-          <div>
-            <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Número</label>
-            <input type="text" className="w-full p-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={numero} onChange={e => setNumero(e.target.value)} />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Bairro</label>
-            <input type="text" className="w-full p-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={bairro} onChange={e => setBairro(e.target.value)} />
-          </div>
-          <div>
-            <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Cidade</label>
-            <input type="text" className="w-full p-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={cidade} onChange={e => setCidade(e.target.value)} />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Estado</label>
-            <input type="text" className="w-full p-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={estado} onChange={e => setEstado(e.target.value)} />
-          </div>
-          <div>
-            <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>CEP</label>
-            <IMaskInput
-              mask="00000-000"
-              value={cep}
-              onAccept={(value: string) => setCep(value)}
-              className="w-full p-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-              style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}
-            />
-          </div>
-        </div>
         <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Observações</label>
-        <textarea className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={observacoes} onChange={e => setObservacoes(e.target.value)} rows={2} />
+        <textarea className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={observacoes} onChange={e => setObservacoes(e.target.value)} />
         <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Status</label>
-        <select value={status} onChange={e => setStatus(e.target.value)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
-          {Constants.public.Enums.status_membro_enum.map(s => <option key={s} value={s}>{s}</option>)}
+        <select value={status} onChange={e => setStatus(e.target.value as Enums<'status_membro_enum'>)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+          <option value="visitante">Visitante</option>
+          <option value="afastado">Afastado</option>
         </select>
-        <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Função/Role</label>
-        <select value={role} onChange={e => setRole(e.target.value)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
-          {Constants.public.Enums.role_enum.map(r => <option key={r} value={r}>{r}</option>)}
+        <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Perfil</label>
+        <select value={role} onChange={e => setRole(e.target.value as Enums<'role_enum'>)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
+          <option value="membro">Membro</option>
+          <option value="admin">Admin</option>
+          <option value="lider">Líder</option>
+          <option value="secretario">Secretário</option>
+          <option value="tesoureiro">Tesoureiro</option>
         </select>
         <button type="submit" className="w-full py-2 rounded text-base font-bold transition-colors shadow-sm mt-2" style={{ background: 'var(--primary)', color: '#fff', letterSpacing: '0.5px', textShadow: '0 1px 2px rgba(0,0,0,0.10)' }}>Salvar Alterações</button>
       </form>
