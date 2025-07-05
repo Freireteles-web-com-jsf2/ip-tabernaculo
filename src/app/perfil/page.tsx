@@ -21,17 +21,7 @@ export default function PerfilPage() {
 
   useEffect(() => {
     if (usuario) {
-      setNome(usuario.nome || "");
       setEmail(usuario.email || "");
-      setFoto(usuario.foto || null);
-      setTelefone(usuario.telefone || "");
-      setWhatsapp(usuario.whatsapp || "");
-      setRua(usuario.rua || "");
-      setNumero(usuario.numero || "");
-      setBairro(usuario.bairro || "");
-      setCidade(usuario.cidade || "");
-      setEstado(usuario.estado || "");
-      setCep(usuario.cep || "");
     }
   }, [usuario]);
 
@@ -46,7 +36,7 @@ export default function PerfilPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     // Aqui você pode salvar os dados no contexto ou backend
-    login({ ...usuario, nome, email, foto, telefone, whatsapp, rua, numero, bairro, cidade, estado, cep });
+    login({ perfil: usuario?.perfil || '', email });
     setMensagem("Perfil atualizado com sucesso!");
   }
 
