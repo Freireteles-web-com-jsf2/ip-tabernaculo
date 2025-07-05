@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useAdminRouteGuard } from '@/context/useAdminRouteGuard';
 
 export default function CargosPage() {
-  const { usuario } = useAuth();
-  const router = useRouter();
   const isAdmin = useAdminRouteGuard('cargos');
   if (!isAdmin) return null;
   const [cargos, setCargos] = useState<{ id: number, nome: string }[]>([]);

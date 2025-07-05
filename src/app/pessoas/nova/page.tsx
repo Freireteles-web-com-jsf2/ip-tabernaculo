@@ -9,8 +9,6 @@ import { TablesInsert, Constants } from '@/types/supabase';
 
 export default function NovaPessoaPage() {
   const [nome, setNome] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [grupo, setGrupo] = useState("");
   const [telefone, setTelefone] = useState("");
   const [foto, setFoto] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -56,7 +54,7 @@ export default function NovaPessoaPage() {
       // Upload da foto para o Supabase Storage
       const file = await (await fetch(foto)).blob();
       const fileName = `membro_${Date.now()}.png`;
-      const { data: uploadData, error: uploadError } = await supabase.storage.from('fotos-membros').upload(fileName, file, { upsert: true });
+      const { error: uploadError } = await supabase.storage.from('fotos-membros').upload(fileName, file, { upsert: true });
       if (uploadError) {
         alert('Erro ao fazer upload da foto');
         return;

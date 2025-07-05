@@ -15,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     setErro("");
     // Login real com Supabase Auth
-    const { error, data } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password: senha,
     });
@@ -24,7 +24,7 @@ export default function LoginPage() {
       return;
     }
     // Buscar perfil do usuário na tabela pessoas
-    const { data: pessoa, error: erroPessoa } = await supabase.from('pessoas').select('role').eq('email', email).single();
+    const { data: pessoa } = await supabase.from('pessoas').select('role').eq('email', email).single();
     let perfil = "membro";
     if (pessoa && pessoa.role) perfil = pessoa.role;
     localStorage.setItem("usuario", JSON.stringify({ perfil, email }));

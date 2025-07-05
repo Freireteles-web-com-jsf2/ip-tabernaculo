@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useAdminRouteGuard } from '@/context/useAdminRouteGuard';
 
 export default function GruposPage() {
-  const { usuario } = useAuth();
-  const router = useRouter();
   const isAdmin = useAdminRouteGuard('grupos');
   if (!isAdmin) return null;
   const [grupos, setGrupos] = useState<{ id: number, nome: string }[]>([]);
