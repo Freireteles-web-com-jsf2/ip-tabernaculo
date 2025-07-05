@@ -83,7 +83,7 @@ export default function NovaPessoaPage() {
   }
 
   // Função utilitária para garantir que o valor é do Enum
-  function isStatusMembroEnum(value: any): value is Enums<'status_membro_enum'> {
+  function isStatusMembroEnum(value: string): value is Enums<'status_membro_enum'> {
     return ["ativo", "inativo", "visitante", "afastado"].includes(value);
   }
 
