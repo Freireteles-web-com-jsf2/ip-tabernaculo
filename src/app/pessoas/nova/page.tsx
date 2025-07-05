@@ -5,7 +5,7 @@ import { FaUserPlus } from "react-icons/fa";
 import { IMaskInput } from 'react-imask';
 import Image from 'next/image';
 import { supabase } from '@/context/SupabaseClient';
-import { TablesInsert, Constants } from '@/types/supabase';
+import { TablesInsert, Enums } from '@/types/supabase';
 
 export default function NovaPessoaPage() {
   const [nome, setNome] = useState("");
@@ -25,8 +25,8 @@ export default function NovaPessoaPage() {
   const [grupos, setGrupos] = useState<{ id: number, nome: string }[]>([]);
   const [cargoId, setCargoId] = useState("");
   const [grupoId, setGrupoId] = useState("");
-  const [status, setStatus] = useState('ativo');
-  const [role, setRole] = useState('membro');
+  const [status, setStatus] = useState<Enums<'status_membro_enum'>>('ativo');
+  const [role, setRole] = useState<Enums<'role_enum'>>('membro');
   const router = useRouter();
 
   useEffect(() => {
@@ -80,6 +80,11 @@ export default function NovaPessoaPage() {
     }
     alert('Membro cadastrado com sucesso!');
     router.push('/pessoas');
+  }
+
+  // Função utilitária para garantir que o valor é do Enum
+  function isStatusMembroEnum(value: any): value is Enums<'status_membro_enum'> {
+    return ["ativo", "inativo", "visitante", "afastado"].includes(value);
   }
 
   return (
@@ -213,12 +218,27 @@ export default function NovaPessoaPage() {
         <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Observações</label>
         <textarea className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }} value={observacoes} onChange={e => setObservacoes(e.target.value)} rows={2} />
         <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Status</label>
-        <select value={status} onChange={e => setStatus(e.target.value)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
-          {Constants.public.Enums.status_membro_enum.map(s => <option key={s} value={s}>{s}</option>)}
+        <select
+          value={status}
+          onChange={e => {
+            const value = e.target.value;
+            if (isStatusMembroEnum(value)) setStatus(value);
+          }}
+          className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}
+        >
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+          <option value="visitante">Visitante</option>
+          <option value="afastado">Afastado</option>
         </select>
         <label className="block mb-2 text-base font-semibold" style={{ color: 'var(--foreground)' }}>Função/Role</label>
-        <select value={role} onChange={e => setRole(e.target.value)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
-          {Constants.public.Enums.role_enum.map(r => <option key={r} value={r}>{r}</option>)}
+        <select value={role} onChange={e => setRole(e.target.value as Enums<'role_enum'>)} className="w-full p-2 mb-4 border rounded text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" style={{ color: 'var(--foreground)', background: 'var(--background)', borderColor: 'var(--border)' }}>
+          <option value="membro">Membro</option>
+          <option value="lider">Líder</option>
+          <option value="secretario">Secretário</option>
+          <option value="tesoureiro">Tesoureiro</option>
+          <option value="admin">Administrador</option>
         </select>
         <button type="submit" className="w-full py-2 rounded text-base font-bold transition-colors shadow-sm mt-2" style={{ background: 'var(--primary)', color: '#fff', letterSpacing: '0.5px', textShadow: '0 1px 2px rgba(0,0,0,0.10)' }}>Salvar</button>
         <button type="button" onClick={() => router.push("/pessoas")}
