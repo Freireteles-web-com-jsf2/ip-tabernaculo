@@ -5,7 +5,7 @@ import { FaSave, FaArrowLeft } from "react-icons/fa";
 import { IMaskInput } from 'react-imask';
 import Image from 'next/image';
 import { supabase } from '@/context/SupabaseClient';
-import { TablesUpdate, Constants, Enums } from '@/types/supabase';
+import { TablesUpdate, Enums } from '@/types/supabase';
 
 const MOCK_MEMBROS = [
   {
